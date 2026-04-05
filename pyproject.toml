@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=71", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "phishhawk"
+version = "0.1.0"
+description = "Open source phishing analysis and IOC extraction pipeline"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+
+dependencies = [
+    "requests>=2.32",
+    "dnspython>=2.7",
+    "python-whois>=0.9",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.0.4",
+]
+
+[tool.ruff]
+line-length = 88

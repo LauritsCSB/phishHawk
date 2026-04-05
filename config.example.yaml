@@ -1,0 +1,18 @@
+# PhishHawk Configuration
+# Copy this file to config.yaml and fill in your values
+# config.yaml is gitignored and will never be comitted
+
+enrichment:
+  abuseipdb_api_key: "YOUR_ABUSEIPDB_API_KEY"
+  urlscan_api_key: "YOUR_URLSCAN_API_KEY"
+  virustotal_api_key: "YOUR_VIRUSTOTAL_API_KEY" # optional
+
+llm:
+  provider: "anthropic" # anthropic, openai or ollama
+  api_key: "YOUR_API_KEY"
+  model: "claude-sonnet-4-20250514"
+
+output:
+  format: "markdown" # markdown, json, csv, stix
+  defang: true
+  output_dir: "./reports"

@@ -209,3 +209,6 @@ __marimo__/
 #PhishHawk
 config.yaml
 reports/
+
+# Virtual environment
+.venv/

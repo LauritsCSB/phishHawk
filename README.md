@@ -8,11 +8,23 @@
 
 ## Features
 
-- **EML Parser** - extracts IP's, domains, URL's, and sender data from email headers and body
-- **Enrichment Engine** - automatically queries whois, DNS, crt.sh, AbuseIPDB, and URLScan
-- **Raw Mode** - works without and AI/LLM API key, outoputs structured data directly
-- **BYOK LLM** - bring your own API key for AI-assisted correlation and report generation (Anthropic, OpenAI, Ollama)
-- **Multiple output formats** - JSON, CSV, defanged IOC list
+**M1 — Core Pipeline**
+- **EML Parser** — extracts IPs, domains, URLs, and sender data from email headers and body
+- **Enrichment Engine** — automatically queries whois, DNS, crt.sh, AbuseIPDB, and URLScan
+- **Raw Mode** — works without an AI/LLM API key, outputs structured data directly
+- **Multiple output formats** — JSON, CSV, defanged IOC list
+
+**M2 — Enrichment & Output** *(in progress)*
+- **Redirect chain tracing** — passively traces URL redirect chains, logs each hop and final destination
+- **AI correlation** — BYOK LLM support for actor profiling and MITRE ATT&CK mapping
+- **Report generation** — human-readable Markdown threat report
+- **STIX/TAXII export** — compatible with MISP and other TI platforms
+- **Attachment extraction** — detects and hashes email attachments
+
+**M3 — Enrichment Suite** *(planned)*
+- **Plugin architecture** — enable/disable enrichment modules via config.yaml
+- **Extended enrichment** — VirusTotal, ThreatFox, PhishTank, Google Safe Browsing, RDAP, HIBP, MalwareBazaar, Hybrid Analysis, GreyNoise, AlienVault OTX, MXToolbox
+- **BYOK LLM** — Anthropic, OpenAI, and Ollama support
 
 ---
 
@@ -21,7 +33,8 @@
 | Milestone | Status | Description |
 |---|---|---|
 | M1 — Core Pipeline | ✅ Complete | Parser + enrichment + raw output |
-| M2 — Enrichment & Output | 🔄 Planned | AI correlation, MISP/STIX export, report generation |
+| M2 — Enrichment & Output | 🔄 In Progress | AI correlation, MITRE mapping, redirect tracing, MISP/STIX export, report generation |
+| M3 — Enrichment Suite | 📋 Planned | Plugin architecture + VirusTotal, ThreatFox, PhishTank, GreyNoise, AlienVault OTX, MXToolbox and more |
 
 ---
 
@@ -83,24 +96,38 @@ output:
 
 ---
 
-## Architetecture
+## Architecture
 
-.eml input
-└── Parser → extracts IOCs
-└── Enrichment → whois, DNS, crt.sh, AbuseIPDB, URLScan
-└── Output → JSON, CSV, defanged IOC list
-└── AI Layer (M2) → correlation, MITRE mapping, report
+```mermaid
+flowchart TD
+    A[.eml input] --> B[Parser\nIOC extraction]
+    B --> C[Enrichment Engine\nwhois · DNS · crt.sh · AbuseIPDB · URLScan]
+    C --> D[Raw Output\nJSON · CSV · defanged IOC list]
+    C --> E[AI Layer — M2\nBYOK · Anthropic · OpenAI · Ollama]
+    E --> F[Correlation\nActor profile · MITRE ATT&CK]
+    F --> G[Report\nMarkdown · STIX · MISP]
+    C --> H[Extended Enrichment — M3\nVirusTotal · ThreatFox · GreyNoise · OTX · MXToolbox · and more]
+```
 
 ---
 
 ## API Keys
 
-| Service | Free Tier | Required |
-|---|---|---|
-| AbuseIPDB | 1,000 requests/day | Yes |
-| URLScan.io | 5,000 scans/month | Yes |
-| VirusTotal | 500 requests/day | No |
-| Anthropic / OpenAI / Ollama | Varies | No (raw mode available) |
+| Service | Free Tier | Required | Milestone |
+|---|---|---|---|
+| AbuseIPDB | 1,000 requests/day | Yes | M1 |
+| URLScan.io | 5,000 scans/month | Yes | M1 |
+| Anthropic / OpenAI / Ollama | Varies | No (raw mode available) | M2 |
+| VirusTotal | 500 requests/day | No | M3 |
+| ThreatFox (abuse.ch) | Unlimited | No | M3 |
+| PhishTank | Unlimited | No | M3 |
+| Google Safe Browsing | 10,000 requests/day | No | M3 |
+| Have I Been Pwned | Limited | No | M3 |
+| MalwareBazaar (abuse.ch) | Unlimited | No | M3 |
+| Hybrid Analysis | 200 requests/day | No | M3 |
+| GreyNoise | 1,000 requests/day | No | M3 |
+| AlienVault OTX | Unlimited | No | M3 |
+| MXToolbox | Limited | No | M3 |
 
 ---
 

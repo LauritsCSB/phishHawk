@@ -60,18 +60,41 @@ Edit `config.yaml` with your API keys:
 
 ```yaml
 enrichment:
-    abuseipdb_api_key: "YOUR_ABUSEIPDB_API_KEY"
-    urlscan_api_key: "YOUR_URLSCAN_API_KEY"
+  # M1
+  abuseipdb_api_key: "YOUR_ABUSEIPDB_API_KEY"
+  urlscan_api_key: "YOUR_URLSCAN_API_KEY"
+
+  # M3 — optional, enable modules in plugins section
+  virustotal_api_key: "YOUR_VIRUSTOTAL_API_KEY"
+  greynoise_api_key: "YOUR_GREYNOISE_API_KEY"
+  hybrid_analysis_api_key: "YOUR_HYBRID_ANALYSIS_API_KEY"
 
 llm:
-    provider: "anthropic" #anthropic, openai or ollama
-    api_key: "YOUR_API_KEY"
-    model: "claude-sonnet-4-20250514"
+  provider: "anthropic"  # anthropic, openai, or ollama
+  api_key: "YOUR_API_KEY"
+  model: "claude-sonnet-4-20250514"
 
 output:
-    format: "markdown"
-    defang: true
-    output_dir: "./reports"
+  format: "markdown"
+  defang: true
+  output_dir: "./reports"
+
+# M3 — enable/disable enrichment modules
+plugins:
+  enabled:
+    - abuseipdb
+    - urlscan
+  disabled:
+    - virustotal
+    - threatfox
+    - phishtank
+    - google_safe_browsing
+    - hibp
+    - malwarebazaar
+    - hybrid_analysis
+    - greynoise
+    - alienvault_otx
+    - mxtoolbox
 ```
 
 ---

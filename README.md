@@ -162,4 +162,4 @@ MIT - free to use, modify, and distribute.
 
 ## Author
 
-Built by Laurits Bentsen (LinkedIn: www.linkedin.com/in/laurits-bentsen-311491a8) as par of a career transition from paramedicine til cybersecurity.
+Built by Laurits Bentsen (LinkedIn: www.linkedin.com/in/laurits-bentsen-311491a8) as part of a career transition from paramedicine til cybersecurity.

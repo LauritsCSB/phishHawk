@@ -44,8 +44,20 @@
 git clone https://github.com/LauritsCSB/phishHawk.git
 cd phishhawk
 python3 -m venv .venv
+```
+
+**Mac/Linux**
+```bash
 source .venv/bin/activate
-pip install -e
+````
+
+**Windows**
+```bash
+.venv\Scripts\activate
+```
+
+```bash
+pip install -e .
 ```
 
 ---

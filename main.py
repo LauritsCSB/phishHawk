@@ -10,6 +10,7 @@ from src.phishhawk.enrichment.whois_lookup import WhoisLookup
 from src.phishhawk.enrichment.dns_lookup import DnsLookup
 from src.phishhawk.enrichment.crtsh_lookup import CrtshLookup
 from src.phishhawk.output.raw_output import RawOutput
+from src.phishhawk.enrichment.redirect_chain import RedirectChainTracer
 
 def main():
     parser = argparse.ArgumentParser(
@@ -51,6 +52,18 @@ def main():
 
         print(" crtsh...")
         enrichment["crtsh"] = CrtshLookup().lookup(doamain)
+
+    # Redirect chain tracing
+    if parsed.urls:
+        print("\n→ Tracing redirect chains...")
+        tracer = RedirectChainTracer()
+        for url in parsed.urls[:3]:  # limit to first 3 URLs
+            chain = tracer.trace(url)
+            enrichment[f"redirect_{url[:30]}"] = chain
+            if chain.error:
+                print(f"    {url[:50]}... → error: {chain.error}")
+            else:
+                print(f"    {url[:50]}... → {chain.total_hops} hop(s) → {chain.final_url[:50]}")
 
     # Output
     print("\n→ Exporting results...")

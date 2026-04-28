@@ -9,12 +9,12 @@ from dataclasses import asdict
 from pathlib import Path
 from datetime import datetime
 
-from phishhawk.parser.eml_parser import ParsedEmail
-from phishhawk.enrichment.whois_lookup import WhoisResult
-from phishhawk.enrichment.dns_lookup import DNSResult
-from phishhawk.enrichment.crtsh_lookup import CRTSHResult
-from phishhawk.enrichment.abuseipdb_lookup import AbuseIPDBResult
-from phishhawk.enrichment.urlscan_lookup import URLScanResult
+from src.phishhawk.parser.eml_parser import ParsedEmail
+from src.phishhawk.enrichment.whois_lookup import WhoisResult
+from src.phishhawk.enrichment.dns_lookup import DnsResult
+from src.phishhawk.enrichment.crtsh_lookup import CrtshResult
+from src.phishhawk.enrichment.abuseipdb_lookup import AbuseIPDBResult
+from src.phishhawk.enrichment.urlscan_lookup import URLScanResult
 
 class RawOutput:
     """Exports enriched IOC data to various formats"""

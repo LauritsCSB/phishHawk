@@ -18,7 +18,7 @@ class ParsedEmail:
     ips: list[str] = field(default_factory=list)
     domains: list[str] = field(default_factory=list)
     urls: list[str] = field(default_factory=list)
-    recieved_headers: list[str] = field(default_factory=list)
+    received_headers: list[str] = field(default_factory=list)
     raw_headears: dict = field(default_factory=dict)
 
 class EmlParser:
@@ -39,7 +39,7 @@ class EmlParser:
         r'+[a-zA-Z]{2,}\b'
     )
 
-    def parse(self, path: str | Path) -> ParsedEmail:
+    def parse(self, path) -> ParsedEmail:
         """Parse a .eml file and return extracted IOCs"""
         raw = Path(path).read_text(encoding='utf-8', errors='replace')
         msg = email.message_from_string(raw)
@@ -47,7 +47,7 @@ class EmlParser:
 
         self._extract_headers(msg, result)
         self._extract_body(msg, result)
-        self._depublicize(result)
+        self._depublicate(result)
 
         return result
     
@@ -72,10 +72,10 @@ class EmlParser:
             result.ips += self.IP_REGEX.findall(x_orig)
         
         #Extract domain from sender
-        if sender_domain := self._extract_domain_from_adress(result.reply_to):
+        if sender_domain := self._extract_domain_from_address(result.reply_to):
             result.domains.append(sender_domain)
 
-        if reply_domain := self._extract_domain_from_adress(result.reply_to):
+        if reply_domain := self._extract_domain_from_address(result.reply_to):
             result.domains.append(reply_domain)
     
     def _extract_body(self, msg, result: ParsedEmail):

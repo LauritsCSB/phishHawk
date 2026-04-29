@@ -4,6 +4,8 @@ Passively traces URL redirect chains and logs each hop
 """
 
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from dataclasses import dataclass, field
 
 @dataclass

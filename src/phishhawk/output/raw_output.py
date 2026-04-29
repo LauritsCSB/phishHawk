@@ -36,21 +36,28 @@ class RawOutput:
             .replace(".", "[.]")
         )
     
-    def export_json(self, parsed: ParsedEmail, enrichment: dict):
+    def export_json(self, parsed: ParsedEmail, enrichment: dict) -> Path:
         """Export all IOC data to a JSON file"""
         timestamp = self._timestamp()
         output_path = self.output_dir / f"phishhawk_report_{timestamp}.json"
 
+        def serialize(obj):
+            """Recursively serialize dataclasses and dicts"""
+            if hasattr(obj, "__dataclass_fields__"):
+                return asdict(obj)
+            elif isinstance(obj, dict):
+                return {k: serialize(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [serialize(i) for i in obj]
+            return obj
+
         data = {
             "metadata": {
                 "generated": timestamp,
-                "tool": "PhishHawk",
+                "tool": "PhishHawk"
             },
             "email": asdict(parsed),
-            "enrichment": {
-                key: asdict(value) 
-                for key, value in enrichment.items()
-            }
+            "enrichment": serialize(enrichment)
         }
 
         output_path.write_text(
@@ -59,7 +66,7 @@ class RawOutput:
         )
 
         return output_path
-    
+        
     def export_csv(self, parsed: ParsedEmail) -> Path:
         """Export extracted IOCs to a CSV file"""
         timestamp = self._timestamp()

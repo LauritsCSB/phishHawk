@@ -4,6 +4,7 @@ from .crtsh_lookup import CrtshLookup, CrtshResult
 from .abuseipdb_lookup import AbuseIPDBLookup, AbuseIPDBResult
 from .urlscan_lookup import URLScanLookup, URLScanResult
 from .redirect_chain import RedirectChainTracer, RedirectChainResult
+from .iterative_enricher import IterativeEnricher, EnrichmentResults
 
 __all__ = [
     "WhoisLookup", "WhoisResult",
@@ -11,5 +12,6 @@ __all__ = [
     "CRTshLookup", "CRTshResult",
     "AbuseIPDBLookup", "AbuseIPDBResult",
     "URLScanLookup", "URLScanResult",
-    "RedirectChainTracer", "RedirectChainResult"
+    "RedirectChainTracer", "RedirectChainResult",
+    "IterativeEnricher", "EnrichmentResults"
 ]

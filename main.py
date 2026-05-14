@@ -3,26 +3,40 @@ PhishHawk - Phishing Analysis Pipeline
 """
 
 import argparse
+import yaml
 from pathlib import Path
 
 from src.phishhawk.parser.eml_parser import EmlParser
 from src.phishhawk.enrichment.iterative_enricher import IterativeEnricher
 from src.phishhawk.output.raw_output import RawOutput
 
+def load_config(path: str = "config.yaml") -> dict:
+    """Load configuration from config.yaml if it exists"""
+    config_path = Path(path)
+    if config_path.exists():
+        with config_path.open("r", encoding="utf-8") as f:
+            return yaml.safe_load(f) or {}
+    return {}
+
 def main():
+    config = load_config()
+
     parser = argparse.ArgumentParser(
         description="PhishHawk - Phishing Analysis Pipeline"
     )
-    parser.add_argument("eml", help="Path to the .eml file")
+    parser.add_argument(
+        "eml",
+        help="Path to the .eml file"
+    )
     parser.add_argument(
         "--output",
-        default="./reports",
+        default=config.get("output", {}).get("output_dir", "./reports"),
         help="Output directory for reports (default: ./reports)"
     )
     parser.add_argument(
         "--depth",
         type=int,
-        default=2,
+        default=config.get("enrichment", {}).get("max_depth", 2),
         help="Max enrchment depth (default: 2)"
     )
     args = parser.parse_args()

@@ -126,7 +126,7 @@ class RawOutput:
             elif whois_result and whois_result.error:
                 lines.append(f"  # Whois Unavailable")
 
-            if dns_result and not dns_result.error and dns_result.a_records:
+            if dns_result and dns_result.a_records:
                 defanged_ips = [self._defang(ip) for ip in dns_result.a_records]
                 lines.append(f"  A Records: {', '.join(defanged_ips)}")
 

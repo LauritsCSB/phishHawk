@@ -4,6 +4,7 @@ Extracts IOC's from .eml files (headers and body)
 """
 
 import email
+from email.header import decode_header
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -53,10 +54,10 @@ class EmlParser:
     
     def _extract_headers(self, msg, result: ParsedEmail):
         """Extract IOCs from email headers"""
-        result.subject = msg.get("Subject", "")
-        result.sender = msg.get("From", "")
-        result.reply_to = msg.get("Reply-To", "")
-        result.recipient = msg.get("To", "")
+        result.subject = self._decode_mime_header(msg.get("Subject", ""))
+        result.sender = self._decode_mime_header(msg.get("From", ""))
+        result.reply_to = self._decode_mime_header(msg.get("Reply-To", ""))
+        result.recipient = self._decode_mime_header(msg.get("To", ""))
         result.recieved_headers = msg.get_all("Received") or []
 
         #Store all headers for reference
@@ -111,6 +112,23 @@ class EmlParser:
         """Extract domain from email address like 'Name <user@domain.com>'"""
         match = re.search(r'@([\w\.\-]+)', address)
         return match.group(1) if match else ""
+    
+    def _decode_mime_header(self, value: str) -> str:
+        """Decode MIME-encoded header values like '=?UTF-8?B?...' to readable text"""
+        if not value:
+            return ""
+        
+        try:
+            parts = decode_header(value)
+            decoded = []
+            for part, charset in parts:
+                if isinstance(part, bytes):
+                    decoded.append(part.decode(charset or 'utf-8', errors="replace"))
+                else:
+                    decoded.append(part)
+            return "".join(decoded)
+        except Exception:
+            return value
     
     def _depublicate(self, result: ParsedEmail):
         """Remove duplicate IOCs while preserving order"""

@@ -90,31 +90,65 @@ class RawOutput:
 
         return output_path
     
-    def export_ioc_list(self, parsed: ParsedEmail) -> Path:
-        """Export defanged IOC list as plain text"""
+    def export_ioc_list(self, parsed: ParsedEmail, enrichment: dict = None) -> Path:
+        """Export defanged IOC list with optional enrichment context"""
         timestamp = self._timestamp()
         output_path = self.output_dir / f"phishhawk_{timestamp}_iocs.txt"
+        enrichment = enrichment or {}
 
         lines = []
-
         lines.append("# PhishHawk IOC List")
         lines.append(f"# Generated: {timestamp}")
         lines.append("")
 
+        # IPs
         lines.append("# IPs")
         for ip in parsed.ips:
             lines.append(self._defang(ip))
-
         lines.append("")
+
+        # Domains
         lines.append("# Domains")
+        whois_data = enrichment.get("whois", {})
+        dns_data = enrichment.get("dns", {})
+
         for domain in parsed.domains:
             lines.append(self._defang(domain))
 
+            whois_result = whois_data.get(domain)
+            dns_result = dns_data.get(domain)
+
+            if whois_result and not whois_result.error:
+                if whois_result.registrar:
+                    lines.append(f"  Registrar: {whois_result.registrar}")
+                if whois_result.country:
+                    lines.append(f"  Country: {whois_result.country}")
+            elif whois_result and whois_result.error:
+                lines.append(f"  # Whois Unavailable")
+
+            if dns_result and not dns_result.error and dns_result.a_records:
+                defanged_ips = [self._defang(ip) for ip in dns_result.a_records]
+                lines.append(f"  A Records: {', '.join(defanged_ips)}")
+
         lines.append("")
+
+        # URLs
         lines.append("# URLs")
+        redirect_data = enrichment.get("redirect_chains", {})
+
         for url in parsed.urls:
             lines.append(self._defang(url))
 
-        output_path.write_text("\n".join(lines), encoding="utf-8")
+            chain_result = redirect_data.get(url)
+            if chain_result and not chain_result.error:
+                if chain_result.final_url and chain_result.final_url != url:
+                    lines.append(f"  Final URL: {self._defang(chain_result.final_url)}")
+                if chain_result.total_hops:
+                    lines.append(f"  Total Hops: {chain_result.total_hops}")
+            elif chain_result and chain_result.error:
+                lines.append(f"  # Redirect Trace Unavailable")
+            
+            lines.append("")
 
+        output_path.write_text("\n".join(lines), encoding="utf-8")
         return output_path

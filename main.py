@@ -74,7 +74,11 @@ def main():
         "redirect_chains": enrichment.redirect_chains,
     })
     csv_path = output.export_csv(parsed)
-    ioc_path = output.export_ioc_list(parsed)
+    ioc_path = output.export_ioc_list(parsed, {
+        "whois": enrichment.whois,
+        "dns": enrichment.dns,
+        "redirect_chains": enrichment.redirect_chains,
+    })
 
     print(f"  JSON:     {json_path}")
     print(f"  CSV:      {csv_path}")

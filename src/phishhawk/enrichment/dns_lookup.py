@@ -26,7 +26,7 @@ class DnsLookup:
         result = DnsResult(query=domain)
 
         for record_type in self.RECORD_TYPES:
-            self._query_record(result, record_type, result)
+            self._query_record(domain, record_type, result)
         
         return result
     
